@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bratislava Driving Game</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        #controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="controls">
+        <button id="up">↑</button>
+        <button id="left">←</button>
+        <button id="right">→</button>
+        <button id="down">↓</button>
+    </div>
+
+    <script>
+        const initialLat = 48.1430;
+        const initialLng = 17.1195;
+
+        // Initialize map centered on Bratislava
+        var map = L.map('map').setView([initialLat, initialLng], 17);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var carIcon = L.icon({
+            iconUrl: 'samko-car.png',
+            iconSize: [80, 80],
+            iconAnchor: [30, 30]
+        });
+
+        // Add car marker
+        var car = L.marker([initialLat, initialLng], {icon: carIcon}).addTo(map);
+
+        // Car movement
+        function moveCar(dx, dy) {
+            var pos = car.getLatLng();
+            car.setLatLng([pos.lat + dy * 0.0002, pos.lng + dx * 0.0002]);
+            map.panTo(car.getLatLng());
+        }
+
+        // Control buttons
+        document.getElementById('up').onclick = () => moveCar(0, 1);
+        document.getElementById('down').onclick = () => moveCar(0, -1);
+        document.getElementById('left').onclick = () => moveCar(-1, 0);
+        document.getElementById('right').onclick = () => moveCar(1, 0);
+
+        // Keyboard controls
+        document.onkeydown = function(e) {
+            switch(e.key) {
+                case 'ArrowUp': moveCar(0, 1); break;
+                case 'ArrowDown': moveCar(0, -1); break;
+                case 'ArrowLeft': moveCar(-1, 0); break;
+                case 'ArrowRight': moveCar(1, 0); break;
+            }
+        };
+    </script>
+</body>
+</html>
